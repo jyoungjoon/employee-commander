@@ -2,8 +2,8 @@ const db = require('../config/config');
 const inquirer = require('inquirer');
 
 class DatabaseQueries {
-  constructor(connection) {
-    this.connection = connection;
+  constructor(db) {
+    this.connection = db;
   }
 
   async viewAllDepartments() {
