@@ -1,4 +1,4 @@
-const databaseQueries = require('./models/databaseQueries');
+const databaseQueries = require('./queries/databaseQueries');
 
 console.log(`
 
