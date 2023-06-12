@@ -6,6 +6,7 @@ const validator = require('validator');
 process.stdin.setMaxListeners(20);
 
 class EmployeeQueries {
+
   async viewAllEmployees() {
     const result = await db.query(
       `SELECT employees.id as Employee_ID, CONCAT(first_name, ' ', last_name) as Name, title as Title, department_name as Department, employees.salary as Salary, CASE WHEN manager_id IS NULL THEN 'N/A' ELSE CAST(manager_id AS CHAR) END as Manager_ID FROM employees LEFT JOIN positions ON employees.position_id = positions.id JOIN departments ON positions.department_id = departments.id ORDER BY employees.id asc`
@@ -56,6 +57,7 @@ class EmployeeQueries {
   }
 
   async addEmployee(newEmployee) {
+    
     const positionData = await db.query(
       'SELECT id, title, salary FROM positions'
     );
