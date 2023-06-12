@@ -54,7 +54,7 @@ To start the application using the sample database and seed data, run the follow
 ```bash
 mysql -u root -p
 source db/schema.sql
-source db/seed.sql
+source db/seeds.sql
 ```
 
 ---
