@@ -56,7 +56,7 @@ class EmployeeQueries {
     }
   }
 
-  async addEmployee(newEmployee) {
+  async addEmployee() {
     
     const positionData = await db.query(
       'SELECT id, title, salary FROM positions'
