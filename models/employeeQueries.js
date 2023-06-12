@@ -260,7 +260,7 @@ class EmployeeQueries {
     }
   }
   
-  async viewEmployeesByDepartment(departmentId) {
+  async viewEmployeesByDepartment() {
     const departmentData = await db.query(
       `SELECT department_name FROM departments`
     );
