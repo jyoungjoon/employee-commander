@@ -1,6 +1,7 @@
 const db = require('../config/db');
 const inquirer = require('inquirer');
 const { printTable } = require('console-table-printer');
+const validator = require('validator');
 
 process.stdin.setMaxListeners(20);
 class PositionQueries {
@@ -24,11 +25,25 @@ class PositionQueries {
         name: 'position',
         type: 'input',
         message: 'What is the title of the new position?',
+        validate: (position) => {
+          if (!validator.isEmpty(position) && validator.isAlpha(position)) {
+            return true;
+          } else {
+            return 'Please enter a valid position title (letters only, no spaces)';
+          }
+        },
       },
       {
         name: 'salary',
         type: 'input',
         message: 'What is the salary of the new position?',
+        validate: (salary) => {
+          if (!validator.isEmpty(salary) && validator.isNumeric(salary)) {
+            return true;
+          } else {
+            return 'Please enter a valid salary (numbers only, no spaces)';
+          }
+        },
       },
       {
         name: 'department',
@@ -37,6 +52,7 @@ class PositionQueries {
         choices: [...departmentNames],
       },
     ]);
+
     await db.query(
       'INSERT INTO positions (title, salary, department_id) VALUES (?, ?, ?)',
       [
@@ -50,14 +66,14 @@ class PositionQueries {
       ]
     );
     const newRow = await db.query(
-      'SELECT title as Position, salary as Salary from positions where title = ?',
+      'SELECT department_name as Department, title as Position, salary as Salary from positions JOIN departments on departments.id = positions.department_id where title = ?',
       `${userInput.position}`
     );
 
     printTable(newRow);
     return console.log(
       `
-  (New) ${userInput.position} position has been successfully added!
+(New) ${userInput.position} position has been successfully added to ${userInput.department} Department.
   `
     );
   }
@@ -73,7 +89,7 @@ class PositionQueries {
       {
         name: 'position',
         type: 'list',
-        message: 'Which position do you wish to delete?',
+        message: 'Which position would you like to delete?',
         choices: [...positionNames, '<= Go back'],
       },
     ]);

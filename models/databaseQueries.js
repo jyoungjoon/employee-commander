@@ -62,7 +62,7 @@ class DatabaseQueries {
           message: 'Please choose from the following:',
           choices: [
             '1. View all departments',
-            '2. View budget',
+            '2. View budget of departments',
             '3. Add a new department',
             '4. Update an existing department',
             '5. Delete an existing department (CAUTION: This action is irreversible!)',
@@ -77,7 +77,7 @@ class DatabaseQueries {
           this.departmentQueries.viewAllDepartments.bind(
             this.departmentQueries
           ),
-        '2. View budget': this.departmentQueries.viewBudget.bind(
+        '2. View budget of departments': this.departmentQueries.viewBudget.bind(
           this.departmentQueries
         ),
         '3. Add a new department': this.departmentQueries.addDepartment.bind(

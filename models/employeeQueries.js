@@ -1,6 +1,7 @@
 const db = require('../config/db');
 const inquirer = require('inquirer');
 const { printTable } = require('console-table-printer');
+const validator = require('validator');
 
 process.stdin.setMaxListeners(20);
 
@@ -21,8 +22,16 @@ class EmployeeQueries {
         name: 'manager_id',
         type: 'input',
         message: `What is the manager's Employee ID?`,
+        validate: (manager_id) => {
+          if (validator.isNumeric(manager_id)) {
+            return true;
+          } else {
+            return 'Please enter a valid Employee ID (numbers only)';
+          }
+        },
       },
     ]);
+
     const employeesByManager = await db.query(
       `SELECT employees.id as Employee_ID, CONCAT(first_name, ' ', last_name) as Name, title as Title, employees.salary as Salary FROM employees LEFT JOIN positions ON employees.position_id = positions.id JOIN departments ON positions.department_id = departments.id where manager_id = '${userInput.manager_id}' order by Salary desc`
     );
@@ -58,16 +67,37 @@ class EmployeeQueries {
         name: 'first_name',
         type: 'input',
         message: 'What is the first name of the new employee?',
+        validate: (first_name) => {
+          if (!validator.isEmpty(first_name) && validator.isAlpha(first_name)) {
+            return true;
+          } else {
+            return 'Please enter a valid first name (letters only)';
+          }
+        },
       },
       {
         name: 'last_name',
         type: 'input',
         message: 'What is the last name of the new employee?',
+        validate: (last_name) => {
+          if (!validator.isEmpty(last_name) && validator.isAlpha(last_name)) {
+            return true;
+          } else {
+            return 'Please enter a valid last name (letters only)';
+          }
+        },
       },
       {
         name: 'salary',
         type: 'input',
         message: 'What is the salary of the new employee?',
+        validate: (salary) => {
+          if (validator.isNumeric(salary)) {
+            return true;
+          } else {
+            return 'Please enter a valid salary (numbers only)';
+          }
+        },
       },
       {
         name: 'position',
@@ -79,7 +109,16 @@ class EmployeeQueries {
         name: 'manager',
         type: 'input',
         message:
-          'Do you wish to assign a manager to the new employee? Please enter Employee_ID of the manager or leave blank.',
+          'What is the Employee ID of the manager of the new employee? (Leave blank if none)',
+        validate: (manager) => {
+          if (manager === '') {
+            return true;
+          } else if (validator.isNumeric(manager)) {
+            return true;
+          } else {
+            return 'Please enter a valid Employee ID (numbers only)';
+          }
+        },
       },
     ]);
 
@@ -123,12 +162,19 @@ class EmployeeQueries {
         name: 'employeeId',
         type: 'input',
         message: 'What is the Employee ID of the employee you wish to update?',
+        validate: (employeeId) => {
+          if (validator.isNumeric(employeeId)) {
+            return true;
+          } else {
+            return 'Please enter a valid Employee ID (numbers only)';
+          }
+        },
       },
       {
         name: 'newPosition',
         type: 'list',
         message:
-          'Which (new) position do you wish to assign to the selected employee?',
+          'What is the new position of the employee?',
         choices: [...positions],
       },
     ]);
@@ -144,10 +190,13 @@ class EmployeeQueries {
         ).id
       }`,
     ]);
+
     const newRow = await db.query(
       `SELECT CONCAT(first_name, ' ', last_name) as Name, salary as Salary, manager_id as Manager_ID, position_id as Position_ID from employees where id = ${userInput.employeeId}`
     );
+
     printTable(newRow);
+
     return console.log(
       `(Update) Employee with Employee ID: (${userInput.employeeId}) has been assigned a new position: ${userInput.newPosition}.`
     );
@@ -158,29 +207,59 @@ class EmployeeQueries {
       {
         name: 'fullName_id',
         type: 'input',
-        message: `What is the full name and ID ('last name', 'first name', Employee ID) of the employee you wish to delete?`,
-      },
-      {
-        name: 'finalCheck',
-        type: 'confirm',
-        message: `Delete the selected employee from the system? (CAUTION: This action is irreversible!)`,
+        message: `What is the full name and ID of the employee you wish to delete? \n  Must be in the format: 'last name', 'first name', Employee ID (e.g. Doe, John, 1)`,
+        validate: (fullName_id) => {
+          if (
+            validator.isAlpha(fullName_id.split(', ')[0]) &&
+            validator.isAlpha(fullName_id.split(', ')[1]) &&
+            validator.isNumeric(fullName_id.split(', ')[2])
+          ) {
+            return true;
+          } else {
+            return `Must be in the format: 'last name', 'first name', Employee ID (e.g. Doe, John, 1)`;
+          }
+        },
       },
     ]);
 
-    if (userInput.finalCheck) {
-      await db.query(
-        `DELETE FROM employees where first_name = '${
-          userInput.fullName_id.split(', ')[1]
-        }' AND last_name = '${userInput.fullName_id.split(', ')[0]}' AND id = ${
-          userInput.fullName_id.split(', ')[2]
-        }`
-      );
-      return console.log(
-        `(Delete) Employee : ${userInput.fullName_id} has been deleted from the system successfully.`
+    const employeeData = await db.query(
+      `SELECT CONCAT(first_name, ' ', last_name) as Name, id as Employee_ID from employees where first_name = '${
+        userInput.fullName_id.split(', ')[1]
+      }' AND last_name = '${userInput.fullName_id.split(', ')[0]}' AND id = ${
+        userInput.fullName_id.split(', ')[2]
+      }`
+    );
+
+    if (employeeData.length > 0) {
+      const { Name, Employee_ID } = employeeData[0];
+      const userConfirmation = await inquirer.prompt([
+        {
+          name: 'finalCheck',
+          type: 'confirm',
+          message: `Are you sure you want to delete Employee: ${Name} (Employee ID: ${Employee_ID})?`,
+          default: false,
+        },
+      ]);
+
+      if (userConfirmation.finalCheck) {
+        await db.query(
+          `DELETE FROM employees where first_name = '${
+            userInput.fullName_id.split(', ')[1]
+          }' AND last_name = '${
+            userInput.fullName_id.split(', ')[0]
+          }' AND id = ${userInput.fullName_id.split(', ')[2]}`
+        );
+        return console.log(
+          `(Delete) Employee : ${Name} (Employee ID: ${Employee_ID}) has been deleted from the system successfully.`
+        );
+      }
+    } else {
+      console.log(
+        `Employee: ${userInput.fullName_id} does not exist. Please make sure you entered the correct name and ID.`
       );
     }
   }
-
+  
   async viewEmployeesByDepartment(departmentId) {
     const departmentData = await db.query(
       `SELECT department_name FROM departments`
