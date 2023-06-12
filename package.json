@@ -2,7 +2,7 @@
   "name": "employee-commander",
   "version": "1.0.0",
   "description": "An app for employee management",
-  "main": "index.js",
+  "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -13,7 +13,7 @@
   "author": "Young Jang",
   "license": "ISC",
   "dependencies": {
-    "console.table": "^0.10.0",
+    "console-table-printer": "^2.11.1",
     "dotenv": "^16.1.4",
     "express": "^4.18.2",
     "inquirer": "^8.2.4",

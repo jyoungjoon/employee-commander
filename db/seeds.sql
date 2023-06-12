@@ -11,40 +11,47 @@ VALUES
     ('General');
 
 INSERT INTO
-    roles (title, salary, department_id)
+    positions (title, salary, department_id)
 VALUES
     ('President', 120000, 6),
+    ('Vice President', 80000, 6),
     ('Marketing Manager', 7000.00, 1),
-    ('Sales Manager', 8000.00, 2),
-    ('Salesperson', 4000.00, 2),
-    ('HR Specialist', 4000.00, 3),
+    ('Telemarketer', 3000.00, 1),
+    ('Sales Manager', 9000.00, 2),
+    ('Salesperson', 3900.00, 2),
+    ('HR Specialist', 4200.00, 3),
     ('HR Manager', 6500.00, 3),
-    ('Chief Financial Officer', 30000.00, 4),
+    ('Accounting Manager', 8000.00, 4),
     ('Accountant', 5000.00, 4),
-    ('Senior Software Engineer', 13000.00, 5),
+    ('Senior Software Engineer', 23000.00, 5),
     ('Software Engineer', 9000.00, 5),
-    ('Sanitation Worker', 2500.00, 6),
-    ('Junior Software Engineer', 7000.00, 5);
+    ('Junior Software Engineer', 7000.00, 5),
+    ('Sanitation Worker', 2800.00, 6),
+    ('Security Guard', 3200.00, 6);
 
 INSERT INTO
     employees (
         first_name,
         last_name,
         salary,
-        role_id,
+        position_id,
         manager_id
     )
 VALUES
-    ('John', 'Doe', 4000, 1, NULL),
-    ('Jane', 'Smith', 2500, 2, 1),
-    ('Mike', 'Johnson', 3500, 2, 1),
-    ('Sarah', 'Williams', 3800, 3, NULL),
-    ('Emily', 'Davis', 4500, 1, NULL),
-    ('Michael', 'Brown', 3200, 2, 1),
-    ('Jessica', 'Wilson', 3800, 2, 1),
-    ('David', 'Anderson', 4100, 3, NULL),
-    ('Alex', 'Lee', 2700, 3, 2),
-    ('Olivia', 'Harris', 3900, 1, NULL),
-    ('Matthew', 'Clark', 3200, 2, 1),
-    ('Sophia', 'Young', 3700, 2, 1),
-    ('Daniel', 'Lewis', 4200, 3, NULL);
+    ('Rihanna', 'Fenty', 120000, 1, NULL),
+    ('Jane', 'Smith', 80000, 2, 1),
+    ('Mike', 'Johnson', 7000, 3, 1),
+    ('Sarah', 'Williams', 3200, 4, 3),
+    ('Emily', 'Davis', 10000, 5, NULL),
+    ('Michael', 'Brown', 4000, 6, 5),
+    ('David', 'Anderson', 4100, 8, NULL),
+    ('Jessica', 'Wilson', 4200, 7, 8),
+    ('Alex', 'Lee', 8000, 9, NULL),
+    ('Olivia', 'Harris', 5000, 10, 9),
+    ('Matthew', 'Clark', 23000, 11, NULL),
+    ('Sophia', 'Young', 9500, 12, 11),
+    ('Daniel', 'Lewis', 7000, 13, 11),
+    ('Greg', 'Carpenter', 2800, 14, NULL),
+    ('Mike', 'Tyson', 3550, 15, NULL),
+    ('Conor', 'McGregor', 3200, 15, NULL),
+    ('Manny', 'Pacquiao', 3500, 15, NULL);
