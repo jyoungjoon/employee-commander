@@ -74,20 +74,13 @@ class DatabaseQueries {
       // create a selection object to handle appropriate actions based on user input
       const selection = {
         // bind the appropriate function to the departmentQueries object; this is done to ensure that the 'this' keyword in the function refers to the departmentQueries object
-        '1. View all departments':
-          this.departmentQueries.viewAllDepartments.bind(
-            this.departmentQueries
-          ),
-        '2. View budget of departments': this.departmentQueries.viewBudget.bind(
-          this.departmentQueries
-        ),
-        '3. Add a new department': this.departmentQueries.addDepartment.bind(
-          this.departmentQueries
-        ),
+        '1. View all departments': this.departmentQueries.viewAllDepartments,
+        '2. View budget of departments': this.departmentQueries.viewBudget,
+        '3. Add a new department': this.departmentQueries.addDepartment,
         '4. Update an existing department':
-          this.departmentQueries.updateDepartment.bind(this.departmentQueries),
+          this.departmentQueries.updateDepartment,
         '5. Delete an existing department (CAUTION: This action is irreversible!)':
-          this.departmentQueries.deleteDepartment.bind(this.departmentQueries),
+          this.departmentQueries.deleteDepartment,
         '<= Go Back': () => {
           return this.mainMenu();
         },
@@ -125,14 +118,10 @@ class DatabaseQueries {
       // create a selection object to handle appropriate actions based on user input
       const selection = {
         // bind the appropriate function to the departmentQueries object; this is done to ensure that the 'this' keyword in the function refers to the positionQueries object
-        '1. View all positions': this.positionQueries.viewAllPositions.bind(
-          this.positionQueries
-        ),
-        '2. Add a new position': this.positionQueries.addPosition.bind(
-          this.positionQueries
-        ),
+        '1. View all positions': this.positionQueries.viewAllPositions,
+        '2. Add a new position': this.positionQueries.addPosition,
         '3. Delete an existing position (CAUTION: This action is irreversible!)':
-          this.positionQueries.deletePosition.bind(this.positionQueries),
+          this.positionQueries.deletePosition,
         '<= Go Back': () => {
           return this.mainMenu();
         },
@@ -174,24 +163,15 @@ class DatabaseQueries {
       // create a selection object to handle appropriate actions based on user input
       const selection = {
         // bind the appropriate function to the departmentQueries object; this is done to ensure that the 'this' keyword in the function refers to the employeeQueries object
-        '1. View all employees': this.employeeQueries.viewAllEmployees.bind(
-          this.employeeQueries
-        ),
+        '1. View all employees': this.employeeQueries.viewAllEmployees,
         '2. View employees by manager':
-          this.employeeQueries.viewEmployeesByManager.bind(
-            this.employeeQueries
-          ),
+          this.employeeQueries.viewEmployeesByManager,
         '3. View employees by department':
-          this.employeeQueries.viewEmployeesByDepartment.bind(
-            this.employeeQueries
-          ),
-        '4. Add a new employee': this.employeeQueries.addEmployee.bind(
-          this.employeeQueries
-        ),
-        '5. Update an existing employee':
-          this.employeeQueries.updateEmployee.bind(this.employeeQueries),
+          this.employeeQueries.viewEmployeesByDepartment,
+        '4. Add a new employee': this.employeeQueries.addEmployee,
+        '5. Update an existing employee': this.employeeQueries.updateEmployee,
         '6. Delete an existing employee (CAUTION: This action is irreversible!)':
-          this.employeeQueries.deleteEmployee.bind(this.employeeQueries),
+          this.employeeQueries.deleteEmployee,
         '<= Go Back': () => {
           return this.mainMenu();
         },
