@@ -14,7 +14,7 @@ class DepartmentQueries {
 
   async viewBudget() {
     const result = await db.query(
-      'SELECT department_name as Department, COUNT(*) as Num_of_Employees, SUM(employees.salary) as Monthly_Budget FROM employees JOIN positions ON employees.position_id = positions.id JOIN departments ON positions.department_id = departments.id GROUP BY department_name ORDER BY Monthly_Budget desc'
+      'SELECT department_name as Department, COUNT(*) as Num_of_Employees, SUM(employees.salary) as Annual_Budget FROM employees JOIN positions ON employees.position_id = positions.id JOIN departments ON positions.department_id = departments.id GROUP BY department_name ORDER BY Annual_Budget desc'
     );
     return printTable(result);
   }
