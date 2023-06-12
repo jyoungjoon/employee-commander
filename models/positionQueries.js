@@ -5,6 +5,7 @@ const validator = require('validator');
 
 process.stdin.setMaxListeners(20);
 class PositionQueries {
+
   async viewAllPositions() {
     const result = await db.query(
       'SELECT positions.id as Position_ID, title as Title, salary as Salary, department_name as Department FROM positions LEFT JOIN departments ON positions.department_id = departments.id ORDER BY positions.id asc'
@@ -115,6 +116,7 @@ class PositionQueries {
       }
     }
   }
+
 }
 
 module.exports = PositionQueries;

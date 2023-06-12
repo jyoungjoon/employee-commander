@@ -14,6 +14,7 @@ class DatabaseQueries {
     this.positionQueries = new PositionQueries(db);
   }
 
+  // exitApplication function to handle exiting the application
   exitApplication = () => {
     console.log('Goodbye!');
     return process.exit();

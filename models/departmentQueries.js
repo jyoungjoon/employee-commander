@@ -59,12 +59,68 @@ class DepartmentQueries {
     );
   }
 
-  // TODO - update and delete Department function
-  deleteDepartment() {
-    return db.query('DELETE from departments WHERE id = departmentId');
+  async deleteDepartment() {
+    const departmentData = await db.query(
+      'SELECT id, department_name FROM departments'
+    );
+    const departmentNames = departmentData.map(
+      (department) => department.department_name
+    );
+    const userInput = await inquirer.prompt([
+      {
+        name: 'department',
+        type: 'list',
+        message: 'Which department would you like to delete?',
+        choices: [...departmentNames],
+      },
+    ]);
+    await db.query('DELETE FROM departments WHERE department_name = ?', [
+      userInput.department,
+    ]);
+    return console.log(
+      `${userInput.department} Department has been successfully deleted from the database.`
+    );
   }
 
-  updateDepartment() {}
+  async updateDepartment() {
+    const departmentData = await db.query(
+      'SELECT id, department_name FROM departments'
+    );
+    const departmentNames = departmentData.map(
+      (department) => department.department_name
+    );
+    const userInput = await inquirer.prompt([
+      {
+        name: 'department',
+        type: 'list',
+        message: 'Which department would you like to update?',
+        choices: [...departmentNames],
+      },
+      {
+        name: 'newDepartment',
+        type: 'input',
+        message: 'What is the new name of the department?',
+        validate: (newDepartment) => {
+          if (
+            !validator.isEmpty(newDepartment) &&
+            validator.isAlpha(newDepartment)
+          ) {
+            return true;
+          } else {
+            return 'Please enter a valid department name (letters only)';
+          }
+        },
+      },
+    ]);
+
+    await db.query(
+      'UPDATE departments SET department_name = ? WHERE department_name = ?',
+      [userInput.newDepartment, userInput.department]
+    );
+    return console.log(
+      `${userInput.department} Department has been successfully updated to ${userInput.newDepartment} Department.`
+    );
+  }
 }
 
 module.exports = DepartmentQueries;
