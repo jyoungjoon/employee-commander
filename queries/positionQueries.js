@@ -1,19 +1,29 @@
 const db = require('../config/db');
 const inquirer = require('inquirer');
-const { printTable } = require('console-table-printer');
 const validator = require('validator');
 
-process.stdin.setMaxListeners(20);
 class PositionQueries {
-
-  async viewAllPositions() {
-    const result = await db.query(
-      'SELECT positions.id as Position_ID, title as Title, salary as Salary, department_name as Department FROM positions LEFT JOIN departments ON positions.department_id = departments.id ORDER BY positions.id asc'
-    );
-    return printTable(result);
+  
+  async query(sql, params) {
+    try {
+      return await db.query(sql, params);
+    } catch (err) {
+      console.error('Database query error:', err.message);
+      throw err;
+    }
   }
 
-  async addPosition() {
+  async getAllPositions() {
+    const sql = `
+      SELECT positions.id as Position_ID, title as Title, salary as Salary, department_name as Department
+      FROM positions
+      LEFT JOIN departments ON positions.department_id = departments.id
+      ORDER BY positions.id ASC
+    `;
+    return await this.query(sql);
+  }
+
+  async addNewPosition() {
     const departmentData = await db.query(
       'SELECT id, department_name FROM departments'
     );
@@ -54,36 +64,32 @@ class PositionQueries {
       },
     ]);
 
-    await db.query(
-      'INSERT INTO positions (title, salary, department_id) VALUES (?, ?, ?)',
-      [
-        userInput.position,
-        userInput.salary,
-        `${
-          departmentData.find(
-            (department) => department.department_name === userInput.department
-          ).id
-        }`,
-      ]
-    );
-    const newRow = await db.query(
-      'SELECT department_name as Department, title as Position, salary as Salary from positions JOIN departments on departments.id = positions.department_id where title = ?',
-      `${userInput.position}`
-    );
+    const sql = `INSERT INTO positions (title, salary, department_id) VALUES (?, ?, ?)`;
+    const params = [
+      userInput.position,
+      userInput.salary,
+      `${
+        departmentData.find(
+          (department) => department.department_name === userInput.department
+        ).id
+      }`,
+    ];
+    await this.query(sql, params);
 
-    printTable(newRow);
-    return console.log(
-      `
-(New) ${userInput.position} position has been successfully added to ${userInput.department} Department.
-  `
-    );
+    const newPositionSql = `SELECT department_name as Department, title as Position, salary as Salary from positions JOIN departments on departments.id = positions.department_id where title = ?`;
+    const newPositionParams = userInput.position;
+    const newPosition = await this.query(newPositionSql, newPositionParams);
+
+    const returnObject = {
+      message: `** (New) ${userInput.position} position has been successfully added to ${userInput.department} Department.`,
+      data: newPosition,
+    };
+    return returnObject;
   }
 
-  async deletePosition() {
-    const positionData = await db.query(
-      `SELECT title from positions ORDER BY title asc`
-    );
-
+  async deleteAPosition() {
+    const sql = `SELECT title from positions ORDER BY title asc`;
+    const positionData = await this.query(sql);
     const positionNames = positionData.map((position) => position.title);
 
     const userInput = await inquirer.prompt([
@@ -107,16 +113,16 @@ class PositionQueries {
       ]);
 
       if (finalCheckInput) {
-        await db.query(
-          `DELETE FROM positions where title = '${userInput.position}'`
-        );
-        return console.log(
-          `(Delete) Position: ${userInput.position} has been deleted successfully from the system.`
-        );
+        const sql = `DELETE FROM positions where title = ?`;
+        const params = userInput.position;
+        await this.query(sql, params);
+
+        const deletedConfirmation = `** (Delete) Position: ${userInput.position} has been deleted successfully from the system.`;
+        return deletedConfirmation;
       }
     }
   }
-
+  
 }
 
-module.exports = PositionQueries;
+module.exports = new PositionQueries();

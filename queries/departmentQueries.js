@@ -1,33 +1,31 @@
 const db = require('../config/db');
 const inquirer = require('inquirer');
-const { printTable } = require('console-table-printer');
 const validator = require('validator');
 
-// setMaxListeners to avoid memory leak(?)
-process.stdin.setMaxListeners(20);
-
 class DepartmentQueries {
-  // viewAllDepartments function to view all departments
-  async viewAllDepartments() {
-    // query the database to get all departments
-    const result = await db.query(
-      'SELECT department_name as Department, id as Department_ID FROM departments order by Department_ID asc'
-    );
-    return printTable(result);
+  async query(sql, params) {
+    try {
+      return await db.query(sql, params);
+    } catch (err) {
+      console.error('Database query error:', err.message);
+    }
   }
 
-  // viewBudget function to view the total utilized annual budget of departments
+  async getAllDepartments() {
+    const sql =
+      'SELECT department_name as Department, id as Department_ID FROM departments order by Department_ID asc';
+    const result = await this.query(sql);
+    return result;
+  }
+
   async viewBudget() {
-    // query the database to get the annual budget of all departments
-    const result = await db.query(
-      'SELECT department_name as Department, COUNT(*) as Num_of_Employees, SUM(employees.salary) as Annual_Budget FROM employees JOIN positions ON employees.position_id = positions.id JOIN departments ON positions.department_id = departments.id GROUP BY department_name ORDER BY Annual_Budget desc'
-    );
-    return printTable(result);
+    const sql =
+      'SELECT department_name as Department, COUNT(*) as Num_of_Employees, SUM(employees.salary) as Annual_Budget FROM employees JOIN positions ON employees.position_id = positions.id JOIN departments ON positions.department_id = departments.id GROUP BY department_name ORDER BY Annual_Budget desc';
+    const result = await this.query(sql);
+    return result;
   }
 
-  // addDepartment function to add a new department
-  async addDepartment() {
-    // prompt the user to enter the name of the new department
+  async addADepartment() {
     const userInput = await inquirer.prompt({
       name: 'department',
       type: 'input',
@@ -41,31 +39,35 @@ class DepartmentQueries {
       },
     });
 
-    // query the database to add the new department
-    const result = await db.query(
-      'INSERT INTO departments (department_name) VALUES (?)',
-      [userInput.department]
-    );
+    const sql = 'INSERT INTO departments (department_name) VALUES (?)';
+    const params = [userInput.department];
+    await this.query(sql, params);
 
+    const newDepartmentSql =
+      'SELECT department_name as Department, id as Department_ID from departments where department_name = ?';
+    const newDepartmentParams = [userInput.department];
     // query the database to get the newly added department
-    const newRow = await db.query(
-      'SELECT department_name as Department, id as Department_ID from departments where department_name = ?',
-      `${userInput.department}`
+    const newDepartmentRow = await this.query(
+      newDepartmentSql,
+      newDepartmentParams
     );
 
-    printTable(newRow);
-    return console.log(
-      `(New) ${userInput.department} Department has been successfully added!`
-    );
+    const newDepartment = {
+      data: newDepartmentRow,
+      message: `** (New) ${userInput.department} Department has been successfully added!`,
+    };
+
+    return newDepartment;
   }
 
-  async deleteDepartment() {
-    const departmentData = await db.query(
+  async deleteADepartment() {
+    const departmentData = await this.query(
       'SELECT id, department_name FROM departments'
     );
     const departmentNames = departmentData.map(
       (department) => department.department_name
     );
+
     const userInput = await inquirer.prompt([
       {
         name: 'department',
@@ -74,21 +76,23 @@ class DepartmentQueries {
         choices: [...departmentNames],
       },
     ]);
-    await db.query('DELETE FROM departments WHERE department_name = ?', [
-      userInput.department,
-    ]);
-    return console.log(
-      `${userInput.department} Department has been successfully deleted from the database.`
-    );
+
+    const sql = 'DELETE FROM departments WHERE department_name = ?';
+    const params = [userInput.department];
+    await this.query(sql, params);
+
+    const deleteConfirmationMsg = `** ${userInput.department} Department has been successfully deleted from the database.`;
+    return deleteConfirmationMsg;
   }
 
-  async updateDepartment() {
+  async updateADepartment() {
     const departmentData = await db.query(
       'SELECT id, department_name FROM departments'
     );
     const departmentNames = departmentData.map(
       (department) => department.department_name
     );
+
     const userInput = await inquirer.prompt([
       {
         name: 'department',
@@ -117,10 +121,11 @@ class DepartmentQueries {
       'UPDATE departments SET department_name = ? WHERE department_name = ?',
       [userInput.newDepartment, userInput.department]
     );
-    return console.log(
-      `${userInput.department} Department has been successfully updated to ${userInput.newDepartment} Department.`
-    );
+
+    const updatedDepartmentMsg = `** ${userInput.department} Department has been successfully updated to ${userInput.newDepartment} Department.`;
+
+    return updatedDepartmentMsg;
   }
 }
 
-module.exports = DepartmentQueries;
+module.exports = new DepartmentQueries();
