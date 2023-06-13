@@ -47,9 +47,20 @@ class EmployeeController {
     }
   }
 
-  async updateEmployee() {
+  async updateEmployeePosition() {
     try {
-      const query = await eq.updateAnEmployee();
+      const query = await eq.updateEmployeePosition();
+      printTable(query.data);
+      console.log(query.message);
+    } catch (err) {
+      console.error('Error updating employee:', err.message);
+      console.log('Failed to update employee. Please try again!');
+    }
+  }
+
+  async updateEmployeeManager() {
+    try {
+      const query = await eq.updateEmployeeManager();
       printTable(query.data);
       console.log(query.message);
     } catch (err) {

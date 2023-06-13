@@ -77,9 +77,9 @@ And you will be prompted with a list of options: View Options for Departments, V
 
 To exit, you can press 'CTRL + C' in any stage (any unsaved data will be lost!), or you can select 'Exit the application' option to exit the application.
 
-Here's a walkthrough video that demonstrates the functionality and codes of the application:
+Here's a walkthrough video that demonstrates the functionality and codes of the application (I recommend viewing it in 1080+ resolution!):
 
-<"COMING SOON!">
+<https://drive.google.com/file/d/1Duh8FI6OVe32rikTg3qZKDrq0SOEjDuS/view?usp=sharing>
 
 ---
 

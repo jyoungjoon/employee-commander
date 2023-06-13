@@ -169,8 +169,9 @@ class Menu {
                 '2. View employees by manager',
                 '3. View employees by department',
                 '4. Add a new employee',
-                '5. Update an existing employee',
-                '6. Delete an existing employee (CAUTION: This action is irreversible!)',
+                "5. Update existing employee's position by ID",
+                "6. Update existing employee's manager by ID",
+                '7. Delete an existing employee (CAUTION: This action is irreversible!)',
                 '<= Go Back',
               ],
             },
@@ -183,9 +184,11 @@ class Menu {
             '3. View employees by department':
               this.employeeQueries.viewEmployeesByDepartment,
             '4. Add a new employee': this.employeeQueries.addEmployee,
-            '5. Update an existing employee':
-              this.employeeQueries.updateEmployee,
-            '6. Delete an existing employee (CAUTION: This action is irreversible!)':
+            "5. Update existing employee's position by ID":
+              this.employeeQueries.updateEmployeePosition,
+            "6. Update existing employee's manager by ID":
+              this.employeeQueries.updateEmployeeManager,
+            '7. Delete an existing employee (CAUTION: This action is irreversible!)':
               this.employeeQueries.deleteEmployee,
             '<= Go Back': () => {
               return this.mainMenu();

@@ -180,7 +180,7 @@ class EmployeeQueries {
     return newEmployee;
   }
 
-  async updateAnEmployee() {
+  async updateEmployeePosition() {
     const sql = 'SELECT id, title, salary FROM positions';
     const positionData = await this.query(sql);
     const positionTitles = await positionData.map((position) => position.title);
@@ -234,6 +234,54 @@ class EmployeeQueries {
     const updatedEmployee = {
       data: updatedEmployeeRow,
       message: `** (Update) Employee with Employee ID: (${userInput.employeeId}) has been assigned a new position: ${userInput.newPosition}.`,
+    };
+
+    return updatedEmployee;
+  }
+
+  async updateEmployeeManager() {
+    const userInput = await inquirer.prompt([
+      {
+        name: 'employeeId',
+        type: 'input',
+        message:
+          'What is the Employee ID of the employee you wish to update the manager for?',
+        validate: (employeeId) => {
+          if (validator.isNumeric(employeeId)) {
+            return true;
+          } else {
+            return 'Please enter a valid Employee ID (numbers only)';
+          }
+        },
+      },
+      {
+        name: 'managerId',
+        type: 'input',
+        message: 'What is the Employee ID of the new manager?',
+        validate: (managerId) => {
+          if (validator.isNumeric(managerId)) {
+            return true;
+          } else {
+            return 'Please enter a valid Employee ID (numbers only)';
+          }
+        },
+      },
+    ]);
+
+    const updateManagerSql = `UPDATE employees SET manager_id = ? WHERE id = ?`;
+    const updateManagerSqlParams = [userInput.managerId, userInput.employeeId];
+
+    await this.query(updateManagerSql, updateManagerSqlParams);
+
+    const updatedEmployeeRowSql = `SELECT CONCAT(first_name, ' ', last_name) as Name, manager_id as Manager_ID from employees where id = ?`;
+    const updatedEmployeeRow = await this.query(
+      updatedEmployeeRowSql,
+      userInput.employeeId
+    );
+
+    const updatedEmployee = {
+      data: updatedEmployeeRow,
+      message: `** (Update) Employee with Employee ID: (${userInput.employeeId}) has been assigned a new manager with Employee ID: (${userInput.managerId}).`,
     };
 
     return updatedEmployee;
