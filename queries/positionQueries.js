@@ -80,8 +80,8 @@ class PositionQueries {
     const newPosition = await this.query(newPositionSql, newPositionParams);
 
     const returnObject = {
-      message: `** (New) ${userInput.position} position has been successfully added to ${userInput.department} Department.`,
       data: newPosition,
+      message: `** (New) ${userInput.position} position has been successfully added to ${userInput.department} Department.`,
     };
     return returnObject;
   }
