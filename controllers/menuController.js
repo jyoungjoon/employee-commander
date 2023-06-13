@@ -1,8 +1,7 @@
-const inquirer = require('inquirer');
-const db = require('../config/db');
 const DepartmentController = require('./departmentController.js');
 const EmployeeController = require('./employeeController.js');
 const PositionController = require('./positionController.js');
+const inquirer = require('inquirer');
 
 process.stdin.setMaxListeners(20);
 

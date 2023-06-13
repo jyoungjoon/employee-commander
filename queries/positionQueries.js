@@ -3,7 +3,6 @@ const inquirer = require('inquirer');
 const validator = require('validator');
 
 class PositionQueries {
-  
   async query(sql, params) {
     try {
       return await db.query(sql, params);
@@ -122,7 +121,6 @@ class PositionQueries {
       }
     }
   }
-  
 }
 
 module.exports = new PositionQueries();
