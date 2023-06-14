@@ -212,5 +212,5 @@ class Menu {
   }
 }
 
-// export the DatabaseQueries class
+// export the Menu class
 module.exports = Menu;
